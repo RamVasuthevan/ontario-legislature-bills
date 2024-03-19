@@ -19,7 +19,7 @@ class ParliamentInfo:
 
 def extract() -> str:
     response = requests.get(PARLIAMENTS_URL)
-    response.raise_for_status() 
+    response.raise_for_status()
     return response.text
 
 

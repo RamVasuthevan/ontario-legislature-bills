@@ -18,8 +18,9 @@ def main():
         all_bill_data.extend(bill_data)
 
     bills.load(all_bill_data)
-    print(f"Data extracted, processed, and saved to '{parliaments.CSV_FILENAME}' and '{bills.CSV_FILENAME}' successfully!")
-
+    print(
+        f"Data extracted, processed, and saved to '{parliaments.CSV_FILENAME}' and '{bills.CSV_FILENAME}' successfully!"
+    )
 
 
 if __name__ == "__main__":

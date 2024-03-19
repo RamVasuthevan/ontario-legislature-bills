@@ -13,7 +13,8 @@
                 "GitHub.github-vscode-theme",
                 "github.vscode-github-actions",
                 "GitHub.vscode-pull-request-github",
-                "ms-python.vscode-pylance"
+                "ms-python.vscode-pylance",
+                "mechatroner.rainbow-csv"
             ]
         }
     },

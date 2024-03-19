@@ -12,11 +12,14 @@ def main():
     for parliament in parliament_data:
         parliament_url = parliament.url
         parliament_name = parliament.parliament
+
         bill_html_content = bills.extract(parliament_url)
         bill_data = bills.transform(parliament_name, bill_html_content)
         all_bill_data.extend(bill_data)
 
     bills.load(all_bill_data)
+    print(f"Data extracted, processed, and saved to '{parliaments.CSV_FILENAME}' and '{bills.CSV_FILENAME}' successfully!")
+
 
 
 if __name__ == "__main__":

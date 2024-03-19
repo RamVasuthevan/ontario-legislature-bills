@@ -11,7 +11,7 @@ CSV_FILENAME: str = "bills.csv"
 @dataclass
 class SponsorInfo:
     name: str
-    title: str = ""  # Default to blank if not available
+    title: str = ""
 
 
 @dataclass
@@ -41,11 +41,7 @@ def transform(parliament: str, html_content: str) -> List[BillInfo]:
         bill_number = cols[0].text.strip()
         bill_link_element = cols[1].find("a")
         bill_title = bill_link_element.text.strip() if bill_link_element else ""
-        url_title = (
-            ROOT_DOMAIN + bill_link_element["href"].lstrip("/")
-            if bill_link_element
-            else ""
-        )
+        url_title = ROOT_DOMAIN + bill_link_element["href"].lstrip("/")
 
         bill_sponsors = []
         sponsors = cols[2].find_all("article", class_="node--type-bill-sponsor")
@@ -70,12 +66,13 @@ def transform(parliament: str, html_content: str) -> List[BillInfo]:
 
 def load(bills_data: List[BillInfo]):
     with open(CSV_FILENAME, "w", newline="", encoding="utf-8") as csvfile:
-        fieldnames = ["parliament", "bill_number", "bill_title", "url_title"]
+        FIELD_NAMES = ["parliament", "bill_number", "bill_title", "url_title"]
         max_sponsors = len(max(bills_data, key=lambda x: len(x.sponsors)).sponsors)
-        for i in range(max_sponsors):
-            fieldnames.extend([f"sponsor_name{i+1}", f"sponsor_title{i+1}"])
 
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        for i in range(max_sponsors):
+            FIELD_NAMES.extend([f"sponsor_name{i+1}", f"sponsor_title{i+1}"])
+
+        writer = csv.DictWriter(csvfile, fieldnames=FIELD_NAMES)
         writer.writeheader()
 
         for bill in bills_data:
@@ -92,13 +89,10 @@ def load(bills_data: List[BillInfo]):
 
 
 if __name__ == "__main__":
-    try:
-        html_content = extract(
-            ROOT_DOMAIN + "en/legislative-business/bills/parliament-42/session-2/"
-        )
-        parliament = "42nd Parliament, Session 2"
-        bill_info_list = transform(parliament, html_content)
-        load(bill_info_list, "bills.csv")
-        print("Data extracted, processed, and saved to 'bills.csv' successfully!")
-    except requests.RequestException as e:
-        print(f"An error occurred: {e}")
+    TEST_URL = "en/legislative-business/bills/parliament-42/session-2/"
+    TEST_PARLIAMENT = "42nd Parliament, Session 2"
+
+    html_content = extract(ROOT_DOMAIN + TEST_URL)
+    bill_info_list = transform(TEST_PARLIAMENT, html_content)
+    load(bill_info_list, CSV_FILENAME)
+    print(f"Data extracted, processed, and saved to '{CSV_FILENAME}' successfully!")

@@ -4,7 +4,6 @@ from dataclasses import dataclass, asdict
 from typing import List
 from bs4 import BeautifulSoup
 
-# Magic variables
 ROOT_DOMAIN: str = "https://www.ola.org/"
 PARLIAMENTS_URL: str = ROOT_DOMAIN + "en/legislative-business/bills"
 CSV_FILENAME: str = "parliaments.csv"
@@ -20,14 +19,14 @@ class ParliamentInfo:
 
 def extract() -> str:
     response = requests.get(PARLIAMENTS_URL)
-    response.raise_for_status()  # Still throw an error for non-200 status codes
+    response.raise_for_status() 
     return response.text
 
 
 def transform(html_content: str) -> List[ParliamentInfo]:
     soup = BeautifulSoup(html_content, "html.parser")
     table = soup.select_one("#block-de-theme-content > article > div > div > table")
-    rows = table.find_all("tr")[1:]  # Assuming the first row is the header
+    rows = table.find_all("tr")[1:]
 
     bills_data = []
     for row in rows:
@@ -57,10 +56,7 @@ def load(bills_data: List[ParliamentInfo]):
 
 
 if __name__ == "__main__":
-    try:
-        html_content = extract()
-        extracted_data = transform(html_content)
-        load(extracted_data)
-        print(f"Data extracted, processed, and saved to '{CSV_FILENAME}' successfully!")
-    except requests.RequestException as e:
-        print(f"An error occurred during extraction: {e}")
+    html_content = extract()
+    extracted_data = transform(html_content)
+    load(extracted_data)
+    print(f"Data extracted, processed, and saved to '{CSV_FILENAME}' successfully!")

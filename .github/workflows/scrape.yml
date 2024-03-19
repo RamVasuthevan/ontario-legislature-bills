@@ -1,0 +1,45 @@
+name: Download and Push File
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 1 * *'  # Run at UTC midnight on the first day of every month
+
+jobs:
+  ETL_bills:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout ontario-legislature-bills
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.PAT_ONTARIOLEGISLATUREBILLS_SCRAPE }}
+          repository: 'RamVasuthevan/ontario-legislature-bills'
+          path: ontario-legislature-bills
+          ref: 'main'
+
+      - name: Setup Python and Pipenv
+        uses: actions/setup-python@v%
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies with pipenv
+        run: |
+          cd ontario-legislature-bills
+          pip install pipenv
+          pipenv install
+
+      - name: Run main.py
+        run: |
+          cd ontario-legislature-bills
+          pipenv run python main.py
+
+      - name: Commit and Push if Files Changed
+        run: |
+          cd ontario-legislature-bills
+          git config user.name "Automated"
+          git config user.email "actions@users.noreply.github.com"
+          git add .
+          timestamp=$(date -u)
+          git commit -m "Downloaded: ${timestamp}: commit: ${{github.sha}}" || exit 0
+          git push --force

@@ -47,8 +47,8 @@ def transform(html_content: str) -> List[ParliamentInfo]:
 
 def load(bills_data: List[ParliamentInfo]):
     with open(CSV_FILENAME, "w", newline="") as csvfile:
-        fieldnames = ["parliament", "url", "start_date", "end_date"]
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        FIELD_NAMES = ["parliament", "url", "start_date", "end_date"]
+        writer = csv.DictWriter(csvfile, fieldnames=FIELD_NAMES)
 
         writer.writeheader()
         for bill in bills_data:

@@ -18,5 +18,5 @@
             ]
         }
     },
-    "postCreateCommand": "pipenv sync --dev"
+    "postCreateCommand": "pipenv sync --dev && pipenv shell"
 }

@@ -17,8 +17,8 @@
                 "mechatroner.rainbow-csv"
             ]
         },
-        "remoteEnv": {
-            "SSH_AUTH_SOCK": "/private/tmp/com.apple.launchd.59SH5AvZIu/Listeners"
+        "settings": {
+            "remote.containers.copyGitConfig": true
         }
     },
     "postCreateCommand": "pipenv sync --dev && pipenv shell"

@@ -16,6 +16,9 @@
                 "ms-python.vscode-pylance",
                 "mechatroner.rainbow-csv"
             ]
+        },
+        "remoteEnv": {
+            "SSH_AUTH_SOCK": "/tmp/ssh-agent.socket"
         }
     },
     "postCreateCommand": "pipenv sync --dev && pipenv shell"

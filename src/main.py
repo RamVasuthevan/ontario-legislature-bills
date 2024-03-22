@@ -1,14 +1,15 @@
 import logging
-import parliaments
-import bills
 
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-)
+from src import bills, log_config, parliaments
+
+log_config.configure_logging()
 
 
 def main():
-    logging.info("Starting the extraction process for parliament data.")
+    logging.info(
+        "Starting the extraction process for parliament data from the URL: "
+        + parliaments.PARLIAMENTS_URL
+    )
     parliament_html_content = parliaments.extract()
     parliament_data = parliaments.transform(parliament_html_content)
     parliaments.load(parliament_data)

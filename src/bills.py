@@ -1,8 +1,14 @@
 import csv
-import requests
+import logging
 from dataclasses import dataclass, field
 from typing import List
+
+import requests
 from bs4 import BeautifulSoup
+
+from src import log_config
+
+log_config.configure_logging()
 
 ROOT_DOMAIN: str = "https://www.ola.org/"
 CSV_FILENAME: str = "bills.csv"
@@ -92,7 +98,10 @@ if __name__ == "__main__":
     TEST_URL = "en/legislative-business/bills/parliament-42/session-2/"
     TEST_PARLIAMENT = "42nd Parliament, Session 2"
 
+    logging.info(f"Starting to extract bills data for {TEST_PARLIAMENT} from {ROOT_DOMAIN + TEST_URL}")
     html_content = extract(ROOT_DOMAIN + TEST_URL)
     bill_info_list = transform(TEST_PARLIAMENT, html_content)
     load(bill_info_list)
-    print(f"Data extracted, processed, and saved to '{CSV_FILENAME}' successfully!")
+    logging.info(
+        f"Data extracted, processed, and saved to '{CSV_FILENAME}' successfully!"
+    )

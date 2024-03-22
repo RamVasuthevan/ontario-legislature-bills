@@ -94,5 +94,5 @@ if __name__ == "__main__":
 
     html_content = extract(ROOT_DOMAIN + TEST_URL)
     bill_info_list = transform(TEST_PARLIAMENT, html_content)
-    load(bill_info_list, CSV_FILENAME)
+    load(bill_info_list)
     print(f"Data extracted, processed, and saved to '{CSV_FILENAME}' successfully!")

@@ -16,9 +16,6 @@
                 "ms-python.vscode-pylance",
                 "mechatroner.rainbow-csv"
             ]
-        },
-        "settings": {
-            "remote.containers.copyGitConfig": true
         }
     },
     "postCreateCommand": "pipenv sync --dev && pipenv shell"

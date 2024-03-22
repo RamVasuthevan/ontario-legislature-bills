@@ -5,3 +5,6 @@ RUN rm -rf .venv
 
 RUN pip install --upgrade pip && \
     pip install pipenv
+
+
+# Rest of config goes here...

@@ -98,7 +98,9 @@ if __name__ == "__main__":
     TEST_URL = "en/legislative-business/bills/parliament-42/session-2/"
     TEST_PARLIAMENT = "42nd Parliament, Session 2"
 
-    logging.info(f"Starting to extract bills data for {TEST_PARLIAMENT} from {ROOT_DOMAIN + TEST_URL}")
+    logging.info(
+        f"Starting to extract bills data for {TEST_PARLIAMENT} from {ROOT_DOMAIN + TEST_URL}"
+    )
     html_content = extract(ROOT_DOMAIN + TEST_URL)
     bill_info_list = transform(TEST_PARLIAMENT, html_content)
     load(bill_info_list)

@@ -15,6 +15,9 @@ CSV_FILENAME: str = "statuses.csv"
 
 @dataclass
 class StatusInfo:
+    parliament: str
+    bill_number: str
+    bill_title: str
     date: str
     bill_stage: str
     activity: str
@@ -28,7 +31,7 @@ def extract(bill_url: str) -> str:
     response.raise_for_status()
     return response.text
 
-def transform(html_content: str) -> List[StatusInfo]:
+def transform(parliament,bill_number,bill_title,html_content: str) -> List[StatusInfo]:
     soup = BeautifulSoup(html_content, 'html.parser')
     table = soup.find('table')
     
@@ -41,14 +44,22 @@ def transform(html_content: str) -> List[StatusInfo]:
         activity = cells[2].text.strip()
         committee = cells[3].text.strip()
         
-        status_info = StatusInfo(date, bill_stage, activity, committee)
+        status_info = StatusInfo(
+            parliament=parliament,
+            bill_number=bill_number,
+            bill_title=bill_title,
+            date=date,
+            bill_stage=bill_stage,
+            activity=activity,
+            committee=committee
+        )
         status_info_list.append(status_info)
     
     return status_info_list
 
 def load(statuses_data: List[StatusInfo]) -> None:
     with open(CSV_FILENAME, "w", newline="") as csvfile:
-        FIELD_NAMES = ["date", "bill_stage", "activity", "committee"]
+        FIELD_NAMES = ["parliament", "bill_number", "bill_title", "date", "bill_stage", "activity", "committee"]
         writer = csv.DictWriter(csvfile, fieldnames=FIELD_NAMES)
 
         writer.writeheader()

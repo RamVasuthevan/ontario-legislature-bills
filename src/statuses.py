@@ -56,14 +56,15 @@ def load(statuses_data: List[StatusInfo]) -> None:
             writer.writerow(asdict(status))
 
 if __name__ == "__main__":
+
     TEST_BILL_URL = "https://www.ola.org/en/legislative-business/bills/parliament-36/session-1/bill-1/"
 
     logging.info(
-        f"Starting to extract bills data for {TEST_BILL_URL}"
+        f"Starting to extract statues data from {TEST_BILL_URL}" # Add more data to the log message
     )
     html_content = extract(TEST_BILL_URL)
-    bill_info_list = transform(html_content)
-    load(bill_info_list)
+    status_info_list = transform(html_content)
+    load(status_info_list)
     logging.info(
         f"Data extracted, processed, and saved to '{CSV_FILENAME}' successfully!"
     )

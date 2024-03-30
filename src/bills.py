@@ -35,7 +35,7 @@ def extract(parliament_url) -> str:
     return response.text
 
 
-def transform(parliament: str, html_content: str) -> List[BillInfo]:
+def transform(parliament: str,, html_content: str) -> List[BillInfo]:
     soup = BeautifulSoup(html_content, "html.parser")
     table = soup.find("table", class_="views-table views-view-table cols-3")
 

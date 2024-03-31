@@ -1,8 +1,11 @@
 import logging
+import time
 
 from src import bills, log_config, parliaments, statuses
 
 log_config.configure_logging()
+
+WAIT_SECONDS = 2
 
 
 def main():
@@ -11,6 +14,7 @@ def main():
         + parliaments.PARLIAMENTS_URL
     )
     parliament_html_content = parliaments.extract()
+    time.sleep(WAIT_SECONDS)
     parliament_data = parliaments.transform(parliament_html_content)
     logging.info(
         f"Parliament data extraction and transformation completed. {len(parliament_data)} records extracted."
@@ -30,6 +34,7 @@ def main():
         )
 
         bill_html_content = bills.extract(parliament.url)
+        time.sleep(WAIT_SECONDS)
         bill_data = bills.transform(parliament.url, bill_html_content)
         all_bill_data.extend(bill_data)
     logging.info(
@@ -50,6 +55,7 @@ def main():
         )
 
         status_html_content = statuses.extract(bill.url_title)
+        time.sleep(WAIT_SECONDS)
         status_data = statuses.transform(bill.parliament, bill.bill_number, bill.bill_title, status_html_content)
         all_status_data.extend(status_data)
     logging.info("Status data extraction and transformation completed. {len(all_status_data)} records extracted.")

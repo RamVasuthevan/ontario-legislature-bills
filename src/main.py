@@ -5,7 +5,7 @@ from src import bills, log_config, parliaments, statuses
 
 log_config.configure_logging()
 
-WAIT_SECONDS = 2
+WAIT_SECONDS = 1
 
 
 def main():

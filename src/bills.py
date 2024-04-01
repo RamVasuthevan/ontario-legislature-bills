@@ -125,6 +125,32 @@ def get_all_bills_from_parliament(
     )
     return bill_info_list
 
+def get_all_bills_from_csv() -> List[BillInfo]:
+    bills_data = []
+    with open(CSV_FILENAME, "r", encoding="utf-8") as csvfile:
+        reader = csv.DictReader(csvfile)
+        for row in reader:
+            parliament = row["parliament"]
+            bill_number = row["bill_number"]
+            bill = row["bill"]
+            url_title = row["url_title"]
+            sponsors = []
+            for i in range(1, 6):
+                sponsor_name = row.get(f"sponsor_name{i}")
+                sponsor_title = row.get(f"sponsor_title{i}")
+                if sponsor_name:
+                    sponsors.append(SponsorInfo(name=sponsor_name, title=sponsor_title))
+            bills_data.append(
+                BillInfo(
+                    parliamentary_session_name=parliament,
+                    bill_number=bill_number,
+                    bill_name=bill,
+                    url_title=url_title,
+                    sponsors=sponsors,
+                )
+            )
+    return bills_data
+
 
 if __name__ == "__main__":
     TEST_PARLIAMENT = parliaments.ParliamentInfo(

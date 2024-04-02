@@ -75,13 +75,6 @@ def get_and_load_changed_data():
     statuses.load_to_csv(all_status_data)
     logging.info(f"Status data saved to '{statuses.CSV_FILENAME}' successfully!")
 
-    
-
-
-
-
-
-    
-
 if __name__ == "__main__":
-    get_and_load_all_data()
+    ## get_and_load_all_data()
+    get_and_load_changed_data()

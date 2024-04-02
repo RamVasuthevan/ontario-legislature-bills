@@ -81,6 +81,7 @@ def load_to_csv(statuses_data: List[StatusInfo]) -> None:
         for status in statuses_data:
             writer.writerow(asdict(status))
 
+
 def get_all_statuses_from_bill(bill: bills.BillInfo) -> List[StatusInfo]:
     logging.info(
         f"Extracting status data for Bill {bill.bill_number}, {bill.bill_name}, {bill.parliamentary_session_name} from {bill.url+STATUS_URL_SUFFIX}"
@@ -99,11 +100,13 @@ def get_all_statuses_from_bill(bill: bills.BillInfo) -> List[StatusInfo]:
     )
     return statuses
 
+
 def get_all_statuses_from_csv() -> List[StatusInfo]:
     with open(CSV_FILENAME, "r", newline="") as csvfile:
         reader = csv.DictReader(csvfile)
         statuses = [StatusInfo(**row) for row in reader]
     return statuses
+
 
 if __name__ == "__main__":
     TEST_BILL = bills.BillInfo(

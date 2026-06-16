@@ -1,69 +1,87 @@
 import logging
-import time
 
-from src import bills, log_config, parliaments, statuses
+from src import bills, parliaments, statuses, util
 
-log_config.configure_logging()
+util.configure_logging()
 
 WAIT_SECONDS = 1
 
 
-def main():
-    logging.info(
-        "Starting the extraction process for parliament data from the URL: "
-        + parliaments.PARLIAMENTS_URL
-    )
-    parliament_html_content = parliaments.extract()
-    time.sleep(WAIT_SECONDS)
-    parliament_data = parliaments.transform(parliament_html_content)
-    logging.info(
-        f"Parliament data extraction and transformation completed. {len(parliament_data)} records extracted."
-    )
+def get_and_load_all_data():
+    parliament_data = parliaments.get_all_parliaments()
+    parliaments.load_to_csv(parliament_data)
+    logging.info(f"Parliament data saved to '{parliaments.CSV_FILENAME}' successfully!")
 
-    parliaments.load(parliament_data)
-    logging.info(
-        f"Parliament data saved to '{parliaments.CSV_FILENAME}' successfully!"
-    )
-
-    all_bill_data = []
     logging.info("Starting the extraction process for bill data.")
-
+    all_bill_data = []
     for parliament in parliament_data:
-        logging.info(
-            f"Extracting bill data for {parliament.url} from {parliament.url}"
-        )
-
-        bill_html_content = bills.extract(parliament.url)
-        time.sleep(WAIT_SECONDS)
-        bill_data = bills.transform(parliament.url, bill_html_content)
+        bill_data = bills.get_all_bills_from_parliament(parliament)
         all_bill_data.extend(bill_data)
-    logging.info(
-        f"Bill data extraction and transformation completed. {len(all_bill_data)} records extracted."
-    )
-
-    bills.load(all_bill_data)
-    logging.info(
-        f"Detailed bill data saved to '{bills.CSV_FILENAME}' successfully!"
-    )
-
+        
+    bills.load_to_csv(all_bill_data)
+    logging.info(f"Bill data saved to '{bills.CSV_FILENAME}' successfully!")
 
     all_status_data = []
     logging.info("Starting the extraction process for status data.")
     for bill in all_bill_data:
-        logging.info(
-            f"Extracting status data for Bill {bill.bill_number}, {bill.bill_title}, {bill.parliament} from {bill.url_title+statuses.STATUS_URL_SUFFIX}"
+        status_data = statuses.transform_from_html(
+            bill.parliament, bill.bill_number, bill.bill_name, bill.url_title
         )
-
-        status_html_content = statuses.extract(bill.url_title)
-        time.sleep(WAIT_SECONDS)
-        status_data = statuses.transform(bill.parliament, bill.bill_number, bill.bill_title, status_html_content)
         all_status_data.extend(status_data)
-    logging.info("Status data extraction and transformation completed. {len(all_status_data)} records extracted.")
 
-    statuses.load(all_status_data)
+    statuses.load_to_csv(all_status_data)
     logging.info(f"Status data saved to '{statuses.CSV_FILENAME}' successfully!")
 
 
+def get_and_load_changed_data():
+    parliament_data_from_url = parliaments.get_all_parliaments()
+    parliaments.load_to_csv(parliament_data_from_url)
+    logging.info(f"Parliament data saved to '{parliaments.CSV_FILENAME}' successfully!")
+
+    parliament_data_from_csv = parliaments.get_all_parliaments_from_csv()
+
+    parliamentary_session_names_from_url = {
+        parliament.parliamentary_session_name for parliament in parliament_data_from_url
+    }
+
+    parliamentary_session_with_possible_changes = [ parliament for parliament in parliament_data_from_csv if parliament.parliamentary_session_name not in parliamentary_session_names_from_url or parliament.end_date == "Present"]
+    parliamentary_session_with_possible_changes_names = {parliament.parliamentary_session_name for parliament in parliamentary_session_with_possible_changes}
+    logging.info("Found the following parliamentary sessions with possible changes:")
+    for parliament in parliamentary_session_with_possible_changes:
+        logging.info(f" - {parliament.parliamentary_session_name}")
+    
+    logging.info("Get all bills from {bills.CSV_FILENAME}")
+    all_bill_data = bills.get_all_bills_from_csv()
+    bills_with_possible_changes = []
+    for parliament in parliamentary_session_with_possible_changes:
+        bill_data = bills.get_all_bills_from_parliament(parliament)
+        bills_with_possible_changes.extend(bill_data)
+    all_bill_data_from_parliaments_without_changes = [bill for bill in all_bill_data if bill.parliamentary_session_name not in parliamentary_session_with_possible_changes_names]
+    all_bill_data = all_bill_data_from_parliaments_without_changes + bills_with_possible_changes
+
+    bills.load_to_csv(all_bill_data)
+    logging.info(f"Bill data saved to '{bills.CSV_FILENAME}' successfully!")
+
+    logging.info("Get all statuses from {statuses.CSV_FILENAME}")
+    all_status_data = statuses.get_all_statuses_from_csv()
+    statuses_with_possible_changes = []
+    for bill in bills_with_possible_changes:
+        status_data = statuses.get_all_statuses_from_bill(bill)
+        statuses_with_possible_changes.extend(status_data)
+    
+    all_status_data_from_bills_without_changes = [status for status in all_status_data if status.parliamentary_session_name not in parliamentary_session_with_possible_changes_names]
+    all_status_data = all_status_data_from_bills_without_changes + statuses_with_possible_changes
+
+    statuses.load_to_csv(all_status_data)
+    logging.info(f"Status data saved to '{statuses.CSV_FILENAME}' successfully!")
+
+    
+
+
+
+
+
+    
 
 if __name__ == "__main__":
-    main()
+    get_and_load_all_data()

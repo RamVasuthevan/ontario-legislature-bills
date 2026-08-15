@@ -1,4 +1,4 @@
-FROM python:3.10
+FROM python:3.14
 
 RUN rm -rf ontario-legislature-bills/.venv
 RUN rm -rf .venv

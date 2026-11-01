@@ -11,7 +11,7 @@ from src import log_config
 log_config.configure_logging()
 
 ROOT_DOMAIN: str = "https://www.ola.org/"
-PARLIAMENTS_URL: str = ROOT_DOMAIN + "en/legislative-business/bills"
+PARLIAMENTS_URL: str = ROOT_DOMAIN + "en/legislative-business/bills/all"
 CSV_FILENAME: str = "parliaments.csv"
 
 
@@ -31,7 +31,7 @@ def extract() -> str:
 
 def transform(html_content: str) -> List[ParliamentInfo]:
     soup = BeautifulSoup(html_content, "html.parser")
-    table = soup.select_one("#block-de-theme-content > article > div > div > table")
+    table = soup.find("table")
     rows = table.find_all("tr")[1:]
 
     bills_data = []

@@ -5,6 +5,9 @@ on:
   schedule:
     - cron: '0 0 1 * *'  # Run at UTC midnight on the first day of every month
 
+permissions:
+  contents: write
+
 jobs:
   ETL_bills:
     runs-on: ubuntu-latest
@@ -13,7 +16,6 @@ jobs:
       - name: Checkout ontario-legislature-bills
         uses: actions/checkout@v7
         with:
-          token: ${{ secrets.PAT_ONTARIOLEGISLATUREBILLS_SCRAPE }}
           repository: 'RamVasuthevan/ontario-legislature-bills'
           path: ontario-legislature-bills
           ref: ${{ github.event_name == 'workflow_dispatch' && github.ref || 'main' }}
